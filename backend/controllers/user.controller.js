@@ -20,6 +20,13 @@ export const register = async (req, res) => {
                 success: false,
             });
         };
+        const existingUsername = await User.findOne({ username });
+        if (existingUsername) {
+            return res.status(401).json({
+                message: "Username is already taken",
+                success: false,
+            });
+        };
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.create({
             username,
@@ -32,6 +39,10 @@ export const register = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "Internal server error",
+            success: false,
+        });
     }
 }
 
