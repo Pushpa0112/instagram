@@ -39,26 +39,23 @@ export default function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group ${
-                isActive ? "font-bold" : ""
-              }`}
+              className={`flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group ${isActive ? "font-bold" : ""
+                }`}
             >
               <Icon
-                className={`w-6 h-6 transition-transform group-hover:scale-105 ${
-                  isActive ? "stroke-[2.5]" : "stroke-2"
-                }`}
+                className={`w-6 h-6 transition-transform group-hover:scale-105 ${isActive ? "stroke-[2.5]" : "stroke-2"
+                  }`}
               />
               <span className="hidden lg:block text-base">{item.name}</span>
             </Link>
           );
         })}
-        
+
         {/* Profile Link */}
         <Link
           href={user ? `/${user.username}` : "#"}
-          className={`flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group ${
-            pathname === `/${user?.username}` ? "font-bold" : ""
-          }`}
+          className={`flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group ${pathname === `/${user?.username}` ? "font-bold" : ""
+            }`}
         >
           <Avatar className="w-6 h-6 border border-gray-200 dark:border-zinc-800 transition-transform group-hover:scale-105">
             <AvatarImage src={user?.profilePicture || ""} alt={user?.username || "Profile"} />

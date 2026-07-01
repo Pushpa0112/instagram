@@ -366,3 +366,39 @@ If `req.file` is still undefined after the code fixes, verify every one of these
 3. **Select `File` type** for the image field in Postman body → form-data (not Text).
 4. **Auth cookie**: Must send a valid `token` cookie. Use Postman's Cookie Manager or set it in the Cookies tab. The `isAuthenticated` middleware now returns a clear `401` if the token is missing/invalid, so check the response for that before assuming multer is the issue.
 5. **Port**: Server runs on `8000`. URL should be `http://localhost:8000/api/v1/post/addpost`.
+
+### [FIXED] Backend Crash on Duplicate Username during Registration (2026-06-30)
+- **Problem**: The `/api/v1/user/register` route crashed the server or hung the request by throwing a `MongoServerError: E11000 duplicate key error` if a user attempted to register with an existing username, due to a lack of error handling.
+- **Fix**: Added an explicit check `await User.findOne({ username })` and returning a 401 status with "Username is already taken". Also added a 500 error response in the `catch` block.
+- **File**: `backend/controllers/user.controller.js`
+
+---
+
+## 15. Implementation Progress
+
+### Phase 0: Project Foundation (Frontend)
+- **State Management**: Set up `useAuthStore` and `useUIStore` using Zustand.
+- **API Client**: Configured an Axios instance (`axios.ts`) with interceptors to normalize errors and handle HTTP-only cookies.
+- **Data Fetching**: Set up TanStack React Query (`providers.tsx`) for server state management.
+- **Architecture**: Established a feature-sliced domain structure (`src/features/*`) for scalable development.
+
+### Phase 1: Authentication Flow (Frontend)
+- **Zod & Forms**: Implemented strict validation schemas (`schemas.ts`) for login and registration. Used native `react-hook-form` along with standard `shadcn/ui` Inputs for the UI.
+- **Zustand Persistence**: Integrated the `persist` middleware into `useAuthStore`, storing non-sensitive user data in `localStorage` to retain sessions on page reload (acting as a fallback since the backend lacks a `/me` endpoint).
+- **Hooks**: Built custom React Query hooks (`useLogin`, `useRegister`, `useLogout`) for robust API calls and automatic cache invalidation.
+- **UI & Routing**: Built Instagram-style `/login` and `/register` pages. Implemented a client-side `AuthGuard` wrapper component in `layout.tsx` to redirect users dynamically based on their authentication status.
+
+### Phase 2: Persistent Navigation Shell (Frontend)
+- **Layout Architecture**: Centralized authenticated views inside a Next.js Route Group (`app/(main)`).
+- **Sidebar (Desktop)**: Built a responsive left sidebar that gracefully collapses from full labels (lg) to icon-only (md) and remains hidden on mobile. Dynamically highlights active routes.
+- **BottomNav (Mobile)**: Added a fixed bottom navigation bar displaying icons (Home, Search, Create, Reels, Profile) for screens <768px.
+- **Search Slide-over Modal**: Integrated a sleek UI slide-over connected to `useUIStore`. Features debounced input wired to a mock user search stub in `features/search/mock.ts`.
+- **Create Post Trigger**: Wired up a global trigger to open a Create Post Modal that acts as a placeholder for file drag-and-drop operations (slated for Phase 4).
+
+### Phase 3: Main Feed & Post Interactions (Frontend)
+- **API Types & Adapters**: Defined UI-friendly `Post` and `Comment` types. Implemented a `getFeed` adapter in `features/feed/api.ts` to map raw backend responses into a structure ready for infinite scrolling pagination.
+- **Infinite Scrolling Feed**: Rebuilt the main `page.tsx` feed using TanStack Query's `useInfiniteQuery`. Implemented a custom `useIntersectionObserver` hook to natively trigger fetching the next page when reaching the bottom of the feed. Includes empty, loading (`PostCardSkeleton`), and error states.
+- **PostCard UI**: Built a responsive `PostCard` featuring author details, interactive action buttons (Like, Comment, Bookmark), and a double-tap heart-burst animation powered by Framer Motion.
+- **Optimistic Interactions**: Built `useLikeToggle` and `useBookmarkToggle` mutations that instantly update the UI (and rollback on failure) to provide a snappy user experience.
+- **Comment Drawer**: Created a dynamic slide-up `CommentDrawer` component. Integrated `useComments` (fetching existing comments via the POST endpoint) and `useAddComment` (with optimistic updates) so users can seamlessly read and add comments.
+- **Next.js Config**: Allowed external images from Cloudinary (`res.cloudinary.com`) in `next.config.ts`.
