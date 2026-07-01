@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import axiosInstance from "@/lib/api/axios";
-import { User } from "@/types/api";
+import { User, Post } from "@/types/api";
 
 interface SuggestedUsersResponse {
   success: boolean;
@@ -42,3 +42,13 @@ export const useFollowUser = () => {
     },
   });
 };
+
+export function useMyPosts() {
+  return useQuery({
+    queryKey: ["myPosts"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("/post/userpost/all");
+      return (data.posts || []) as Post[];
+    },
+  });
+}

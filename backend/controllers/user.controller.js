@@ -199,7 +199,8 @@ export const followOrUnfollow = async (req, res) => {
             });
         }
         // mai check krunga ki follow krna hai ya unfollow
-        const isFollowing = user.following.includes(jiskoFollowKrunga);
+        // Convert ObjectIds to string before checking
+        const isFollowing = user.following.some(id => id.toString() === jiskoFollowKrunga);
         if (isFollowing) {
             // unfollow logic ayega
             await Promise.all([
@@ -210,8 +211,8 @@ export const followOrUnfollow = async (req, res) => {
         } else {
             // follow logic ayega
             await Promise.all([
-                User.updateOne({ _id: followKrneWala }, { $push: { following: jiskoFollowKrunga } }),
-                User.updateOne({ _id: jiskoFollowKrunga }, { $push: { followers: followKrneWala } }),
+                User.updateOne({ _id: followKrneWala }, { $addToSet: { following: jiskoFollowKrunga } }),
+                User.updateOne({ _id: jiskoFollowKrunga }, { $addToSet: { followers: followKrneWala } }),
             ])
             return res.status(200).json({ message: 'followed successfully', success: true });
         }

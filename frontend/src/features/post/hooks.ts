@@ -114,3 +114,73 @@ export function useAddComment(postId: string) {
     },
   });
 }
+
+export function useCreatePost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ formData, onUploadProgress }: { formData: FormData, onUploadProgress?: (progressEvent: any) => void }) => {
+      const { data } = await axiosInstance.post('/post/addpost', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+      queryClient.invalidateQueries({ queryKey: ['myPosts'] });
+    },
+  });
+}
+
+export function useDeletePost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (postId: string) => {
+      const { data } = await axiosInstance.delete(`/post/delete/${postId}`);
+      return data;
+    },
+    onMutate: async (postId) => {
+      await queryClient.cancelQueries({ queryKey: ['feed'] });
+      await queryClient.cancelQueries({ queryKey: ['myPosts'] });
+
+      const previousFeed = queryClient.getQueryData(['feed']);
+      const previousMyPosts = queryClient.getQueryData(['myPosts']);
+
+      // Optimistically remove from feed
+      queryClient.setQueryData(['feed'], (oldData: any) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            posts: page.posts.filter((post: Post) => post.id !== postId),
+          })),
+        };
+      });
+
+      // Optimistically remove from myPosts
+      queryClient.setQueryData(['myPosts'], (oldData: any) => {
+        if (!oldData) return oldData;
+        return oldData.filter((post: Post) => post.id !== postId);
+      });
+
+      return { previousFeed, previousMyPosts };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousFeed) {
+        queryClient.setQueryData(['feed'], context.previousFeed);
+      }
+      if (context?.previousMyPosts) {
+        queryClient.setQueryData(['myPosts'], context.previousMyPosts);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+      queryClient.invalidateQueries({ queryKey: ['myPosts'] });
+    }
+  });
+}

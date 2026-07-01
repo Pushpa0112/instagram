@@ -82,9 +82,11 @@ export function CommentDrawer({ post, isOpen, onClose }: CommentDrawerProps) {
                   No comments yet. Be the first to comment!
                 </div>
               ) : (
-                comments?.map((comment) => (
-                  <div key={comment.id} className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-zinc-200 overflow-hidden shrink-0">
+                comments?.map((comment) => {
+                  const commentId = (comment as any)._id || comment.id;
+                  return (
+                    <div key={commentId} className="flex gap-3">
+                      <div className="w-8 h-8 rounded-full bg-zinc-200 overflow-hidden shrink-0">
                       {comment.author?.profilePicture && (
                         <img src={comment.author.profilePicture} alt={comment.author.username} className="w-full h-full object-cover" />
                       )}
@@ -99,8 +101,9 @@ export function CommentDrawer({ post, isOpen, onClose }: CommentDrawerProps) {
                       </span>
                     </div>
                   </div>
-                ))
-              )}
+                );
+              })
+            )}
             </div>
 
             {/* Input area */}

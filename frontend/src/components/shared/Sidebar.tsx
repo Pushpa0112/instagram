@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Search, Compass, MessageCircle, Heart, PlusSquare, Menu, LogOut } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useUIStore } from "@/store/useUIStore";
 import { useLogout } from "@/features/auth/hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -19,6 +20,7 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
+  const toggleCreatePost = useUIStore((state) => state.toggleCreatePost);
   const { mutate: logout } = useLogout();
 
   return (
@@ -35,6 +37,19 @@ export default function Sidebar() {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
+          if (item.name === "Create") {
+            return (
+              <button
+                key={item.name}
+                onClick={toggleCreatePost}
+                className="flex w-full items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group"
+              >
+                <Icon className="w-6 h-6 transition-transform group-hover:scale-105 stroke-2" />
+                <span className="hidden lg:block text-base">{item.name}</span>
+              </button>
+            );
+          }
+
           return (
             <Link
               key={item.name}
