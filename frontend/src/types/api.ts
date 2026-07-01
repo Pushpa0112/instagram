@@ -16,19 +16,22 @@ export interface User {
 }
 
 export interface Post {
-  _id: string;
-  caption?: string;
+  id: string;
+  author: User; // We assume populated author in the UI mapper
   image: string;
-  author: User | string;
-  likes: string[];
-  comments: Comment[] | string[];
+  caption?: string;
+  likeCount: number;
+  isLikedByMe: boolean;
+  commentCount: number;
+  isBookmarkedByMe: boolean;
+  createdAt: string;
 }
 
 export interface Comment {
-  _id: string;
+  id: string;
   text: string;
-  author: User | string;
-  post: string;
+  author: User;
+  createdAt: string;
 }
 
 export interface Message {
