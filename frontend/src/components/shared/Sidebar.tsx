@@ -9,18 +9,21 @@ import {
   Video, 
   MessageCircle, 
   Heart, 
-  Menu 
+  Menu,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreatePostTrigger from "./CreatePostTrigger";
+import { useLogout } from "@/features/auth/hooks";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const { toggleSearch, isSearchOpen } = useUIStore();
+  const logout = useLogout();
 
   const navItems = [
     { name: "Home", href: "/", icon: Home, isActive: pathname === "/" },
@@ -101,9 +104,17 @@ export default function Sidebar() {
         </Link>
       </div>
 
-      {/* More Menu */}
-      <div className="p-3 mt-auto">
-        <button className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group w-full">
+      {/* More Menu & Logout */}
+      <div className="p-3 mt-auto flex flex-col gap-1">
+        <button 
+          onClick={() => logout.mutate()}
+          disabled={logout.isPending}
+          className="flex items-center gap-4 p-3 rounded-xl hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30 dark:hover:text-red-500 transition-colors group w-full text-left"
+        >
+          <LogOut className="w-6 h-6 group-hover:scale-105 transition-transform" />
+          <span className="hidden lg:block text-base">Logout</span>
+        </button>
+        <button className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group w-full text-left">
           <Menu className="w-6 h-6 group-hover:scale-105 transition-transform" />
           <span className="hidden lg:block text-base">More</span>
         </button>
