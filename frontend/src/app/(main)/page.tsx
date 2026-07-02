@@ -4,6 +4,7 @@ import SuggestedUsers from "@/features/profile/SuggestedUsers";
 import { usePostsFeed } from "@/features/feed/hooks";
 import { PostCard } from "@/features/post/PostCard";
 import { PostCardSkeleton } from "@/features/post/PostCardSkeleton";
+import { StoriesBar } from "@/features/story/StoriesBar";
 
 export default function MainPage() {
   const { data, isLoading, isError, hasNextPage, fetchNextPage, isFetchingNextPage } = usePostsFeed();
@@ -11,7 +12,8 @@ export default function MainPage() {
   return (
     <div className="flex justify-center max-w-5xl mx-auto w-full">
       {/* Main Feed Column */}
-      <div className="flex-1 max-w-[630px] pt-10 px-4 sm:px-0 lg:ml-12">
+      <div className="flex-1 max-w-[630px] pt-10 px-0 sm:px-0 lg:ml-12">
+        <StoriesBar />
         {isLoading ? (
           <div className="flex flex-col gap-8 pb-20">
              {[1, 2, 3].map((i) => <PostCardSkeleton key={i} />)}

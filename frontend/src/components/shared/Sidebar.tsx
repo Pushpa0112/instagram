@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Compass, MessageCircle, Heart, PlusSquare, Menu, LogOut } from "lucide-react";
+import { Home, Search, Compass, MessageCircle, Heart, PlusSquare, Menu, LogOut, Clapperboard } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
 import { useLogout } from "@/features/auth/hooks";
@@ -12,6 +12,7 @@ const navItems = [
   { name: "Home", href: "/", icon: Home },
   { name: "Search", href: "#", icon: Search },
   { name: "Explore", href: "/explore", icon: Compass },
+  { name: "Reels", href: "/reels", icon: Clapperboard },
   { name: "Messages", href: "/messages", icon: MessageCircle },
   { name: "Notifications", href: "/notifications", icon: Heart },
   { name: "Create", href: "#", icon: PlusSquare },

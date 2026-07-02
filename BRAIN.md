@@ -422,3 +422,12 @@ If `req.file` is still undefined after the code fixes, verify every one of these
 - **Messaging Hooks**: Developed `useMessages` (fetching the thread from `GET /message/all/:id`) and `useSendMessage` (posting to `POST /message/send/:id`). The `useSendMessage` hook implements an optimistic append to immediately render outgoing messages without waiting for the network loop.
 - **Real-Time Wiring**: Configured `messages/page.tsx` to mount the socket connection upon loading and listen to `newMessage` events. It automatically appends incoming messages into the React Query cache, rendering them instantly.
 - **Messaging Interface**: Designed a responsive two-pane `MessagesPage` layout. The left pane enumerates `knownPartners`, while the right pane renders `ThreadView.tsx`. `ThreadView` maps `MessageBubble` components and leverages a `useRef` auto-scroll mechanic to keep the view focused on the newest messages. Typing indicators are fully stubbed and ready to be turned on when the backend supports them.
+
+### Phase 7: Stories & Reels UI (Mock Data)
+- **Mock Service Layer**: Built `features/story/service.ts` and `features/reel/service.ts` to export simulated async data fetchers (`getStories`, `getReels`) returning array structures. This decouples the UI from the network layer, ensuring a 1-line swap when backend endpoints are ready.
+- **StoriesBar**: Injected a horizontally-scrollable (`overflow-x-auto`) row of avatars at the top of the main feed. It uses CSS gradients for unviewed story rings and handles responsive edge spacing. Includes a "Your story" creation placeholder.
+- **StoryViewer Modal**: Built an immersive, full-screen overlay for viewing stories. Features:
+  - Top progress bars that automatically advance using `setInterval`.
+  - Left/right tap zones for manual navigation.
+  - Pausing the timer on touch/hold.
+- **Reels Page & Player**: Implemented `app/(main)/reels/page.tsx` with CSS vertical scroll snapping (`snap-y snap-mandatory`). Built `ReelPlayer.tsx` containing an `IntersectionObserver` to trigger autoplay only when the video snaps into view, mimicking Instagram's native feel. Included interactive sidebar overlays (Like, Comment, Share) mapped to mock data counts.
