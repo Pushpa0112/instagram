@@ -402,3 +402,23 @@ If `req.file` is still undefined after the code fixes, verify every one of these
 - **Optimistic Interactions**: Built `useLikeToggle` and `useBookmarkToggle` mutations that instantly update the UI (and rollback on failure) to provide a snappy user experience.
 - **Comment Drawer**: Created a dynamic slide-up `CommentDrawer` component. Integrated `useComments` (fetching existing comments via the POST endpoint) and `useAddComment` (with optimistic updates) so users can seamlessly read and add comments.
 - **Next.js Config**: Allowed external images from Cloudinary (`res.cloudinary.com`) in `next.config.ts`.
+
+### Phase 4: Post Creation & Own-Posts Management (Frontend)
+- **Create Post Modal**: Updated the multi-step `CreatePostModal.tsx` to support drag-and-drop file selection, client-side aspect ratio toggling (Square vs Original), and a caption input validated securely via `react-hook-form` and `zod`.
+- **Post Creation Mutation**: Validated `useCreatePost` hooked to the `POST /api/v1/post/addpost` endpoint. It uses native `FormData` for multipart uploads and tracks upload progress via Axios's `onUploadProgress`.
+- **Profile Grid**: Built `MyPostsGrid.tsx` fetching user posts (`useMyPosts`) and rendering them in an Instagram-style responsive 3-column grid with a sleek hover overlay displaying like and comment counts.
+- **Delete Post Flow**: Integrated an interactive `AlertDialog` triggered from the profile grid to delete posts. Powered by the `useDeletePost` mutation which optimistically updates the feed and profile query caches for instantaneous UI feedback.
+
+### Phase 5: Profile & Follow System (Frontend)
+- **Profile Page Route**: Migrated the profile route from `/[username]` to `/profile/[id]` to align directly with the backend's `GET /api/v1/user/:id/profile` expectations.
+- **Profile View & Layout**: Designed a dynamic Profile Page `page.tsx` loading via TanStack Query's `useUserProfile`. It features a resilient loading skeleton, real post/follower/following counts extracted from the backend populations, and two tabs: Posts and Saved (the latter serving as an empty placeholder).
+- **Edit Profile Modal**: Built `EditProfileModal.tsx` utilizing React Hook Form + Zod. Fields include Bio and Gender, and an integrated native file input handles instant client-side profile photo previewing. Uploads are handled via `FormData` to the backend.
+- **Follow System**: Built `FollowButton.tsx` component that accepts a target `userId` and toggles Follow/Unfollow via the `useFollowUser` mutation. It optimistically invalidates caches to ensure instantaneous UI refreshes.
+- **Suggested Users Sidebar**: Developed a `SuggestedUsers.tsx` sidebar widget integrated into the main feed, fetching from `useSuggestedUsers` and mapping `FollowButton`s to each suggested user.
+
+### Phase 6: Real-Time Direct Messaging (Frontend)
+- **Socket Integration**: Installed `socket.io-client` and built `lib/socket.ts` to manage a singleton socket connection authenticating with the active `userId`.
+- **State Management**: Built `useMessageStore.ts` using Zustand to track the currently active chat thread and persist a local array of `knownPartners`. (This serves as a client-side proxy since the backend currently lacks a `GET /conversations` endpoint).
+- **Messaging Hooks**: Developed `useMessages` (fetching the thread from `GET /message/all/:id`) and `useSendMessage` (posting to `POST /message/send/:id`). The `useSendMessage` hook implements an optimistic append to immediately render outgoing messages without waiting for the network loop.
+- **Real-Time Wiring**: Configured `messages/page.tsx` to mount the socket connection upon loading and listen to `newMessage` events. It automatically appends incoming messages into the React Query cache, rendering them instantly.
+- **Messaging Interface**: Designed a responsive two-pane `MessagesPage` layout. The left pane enumerates `knownPartners`, while the right pane renders `ThreadView.tsx`. `ThreadView` maps `MessageBubble` components and leverages a `useRef` auto-scroll mechanic to keep the view focused on the newest messages. Typing indicators are fully stubbed and ready to be turned on when the backend supports them.

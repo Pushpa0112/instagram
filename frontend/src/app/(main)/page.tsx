@@ -1,6 +1,6 @@
 "use client";
 
-import SuggestedUsers from "@/components/shared/SuggestedUsers";
+import SuggestedUsers from "@/features/profile/SuggestedUsers";
 import { usePostsFeed } from "@/features/feed/hooks";
 import { PostCard } from "@/features/post/PostCard";
 import { PostCardSkeleton } from "@/features/post/PostCardSkeleton";

@@ -6,20 +6,34 @@ import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { useCreatePost } from "./hooks";
 import { toast } from "sonner";
-import { ArrowLeft, ImagePlus } from "lucide-react";
+import { ArrowLeft, ImagePlus, Crop } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const formSchema = z.object({
+  caption: z.string().max(2200, "Caption is too long").optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export default function CreatePostModal() {
   const { isCreatePostOpen, toggleCreatePost } = useUIStore();
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [caption, setCaption] = useState("");
+  const [aspectRatio, setAspectRatio] = useState<"square" | "original">("square");
   const [progress, setProgress] = useState(0);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutateAsync: createPost, isPending } = useCreatePost();
+
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { caption: "" },
+  });
 
   const handleClose = () => {
     if (isPending) return;
@@ -28,8 +42,9 @@ export default function CreatePostModal() {
       setStep(1);
       setSelectedFile(null);
       setPreviewUrl(null);
-      setCaption("");
+      setAspectRatio("square");
       setProgress(0);
+      reset();
     }, 300);
   };
 
@@ -75,13 +90,13 @@ export default function CreatePostModal() {
     }
   };
 
-  const handleSubmit = async () => {
+  const onSubmit = async (values: FormValues) => {
     if (!selectedFile) return;
 
     const formData = new FormData();
     formData.append("image", selectedFile);
-    if (caption) {
-      formData.append("caption", caption);
+    if (values.caption) {
+      formData.append("caption", values.caption);
     }
 
     try {
@@ -120,7 +135,7 @@ export default function CreatePostModal() {
             Create a new post by uploading an image and adding a caption.
           </DialogDescription>
           {step === 2 && !isPending ? (
-            <Button variant="ghost" className="text-blue-500 font-semibold hover:text-blue-600 hover:bg-transparent" onClick={handleSubmit}>
+            <Button variant="ghost" className="text-blue-500 font-semibold hover:text-blue-600 hover:bg-transparent" onClick={handleSubmit(onSubmit)}>
               Share
             </Button>
           ) : (
@@ -157,22 +172,45 @@ export default function CreatePostModal() {
 
           {step === 2 && (
             <div className="flex flex-col md:flex-row h-full">
-              <div className="w-full md:w-[60%] flex items-center justify-center bg-black aspect-square md:aspect-auto">
+              <div className="w-full md:w-[60%] flex items-center justify-center bg-black aspect-square md:aspect-auto relative group">
                 {previewUrl && (
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
+                  <>
+                    <img 
+                      src={previewUrl} 
+                      alt="Preview" 
+                      className={`w-full h-full transition-all duration-300 ${aspectRatio === "square" ? "object-cover aspect-square" : "object-contain"}`} 
+                    />
+                    {!isPending && (
+                      <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button 
+                          variant="secondary" 
+                          size="icon" 
+                          className="rounded-full bg-black/60 hover:bg-black/80 text-white border-0"
+                          onClick={() => setAspectRatio(prev => prev === "square" ? "original" : "square")}
+                          title="Toggle Aspect Ratio"
+                        >
+                          <Crop className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
               <div className="w-full md:w-[40%] flex flex-col border-l dark:border-zinc-800 bg-white dark:bg-zinc-900">
-                <div className="p-4 flex-1">
-                  <Textarea
-                    placeholder="Write a caption..."
-                    className="w-full border-0 focus-visible:ring-0 resize-none p-0 bg-transparent text-base"
-                    rows={6}
-                    value={caption}
-                    onChange={(e) => setCaption(e.target.value)}
-                    disabled={isPending}
-                  />
-                </div>
+                <form id="create-post-form" className="flex-1 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+                  <div className="p-4 flex-1">
+                    <Textarea
+                      placeholder="Write a caption..."
+                      className="w-full border-0 focus-visible:ring-0 resize-none p-0 bg-transparent text-base"
+                      rows={6}
+                      disabled={isPending}
+                      {...register("caption")}
+                    />
+                    {errors.caption && (
+                      <p className="text-red-500 text-sm mt-2">{errors.caption.message}</p>
+                    )}
+                  </div>
+                </form>
                 {isPending && (
                   <div className="p-4 border-t dark:border-zinc-800 space-y-2">
                     <p className="text-xs text-center text-gray-500">Uploading {progress}%</p>

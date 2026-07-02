@@ -68,8 +68,8 @@ export default function Sidebar() {
 
         {/* Profile Link */}
         <Link
-          href={user ? `/${user.username}` : "#"}
-          className={`flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group ${pathname === `/${user?.username}` ? "font-bold" : ""
+          href={user ? `/profile/${user._id}` : "#"}
+          className={`flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group ${pathname === `/profile/${user?._id}` ? "font-bold" : ""
             }`}
         >
           <Avatar className="w-6 h-6 border border-gray-200 dark:border-zinc-800 transition-transform group-hover:scale-105">
