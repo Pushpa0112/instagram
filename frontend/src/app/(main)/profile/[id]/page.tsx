@@ -7,7 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import Image from "next/image";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle, Camera, Bookmark } from "lucide-react";
+import { EmptyState } from "@/components/shared/EmptyState";
 import EditProfileModal from "@/features/profile/EditProfileModal";
 import FollowButton from "@/features/profile/FollowButton";
 import { Button } from "@/components/ui/button";
@@ -138,18 +139,23 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
               );
             })}
             {postCount === 0 && (
-              <div className="col-span-3 text-center py-20 text-gray-500">
-                No posts yet.
+              <div className="col-span-3">
+                <EmptyState
+                  icon={Camera}
+                  title="No Posts Yet"
+                  description="When you share photos, they will appear on your profile."
+                />
               </div>
             )}
           </div>
         )}
 
         {activeTab === "saved" && (
-          <div className="text-center py-20 text-gray-500">
-            <h2 className="text-2xl font-bold mb-2">Saved</h2>
-            <p>List view coming soon! This feature is pending a dedicated backend endpoint.</p>
-          </div>
+          <EmptyState
+            icon={Bookmark}
+            title="Saved"
+            description="List view coming soon! This feature is pending a dedicated backend endpoint."
+          />
         )}
       </div>
     </div>

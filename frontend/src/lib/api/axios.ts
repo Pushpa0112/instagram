@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { toast } from 'sonner';
 
 // Default base URL fallback
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
@@ -49,6 +50,9 @@ axiosInstance.interceptors.response.use(
       status: statusCode,
       success: false,
     };
+
+    // Show toast for error unless it's a 401 (handled by interceptors typically, but let's show it anyway)
+    toast.error(errorMessage);
 
     return Promise.reject(normalizedError);
   }

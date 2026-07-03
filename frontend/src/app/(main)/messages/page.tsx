@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Edit } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Message } from "@/types/api";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 export default function MessagesPage() {
   const authUser = useAuthStore((state) => state.user);
@@ -86,15 +87,14 @@ export default function MessagesPage() {
         {activePartner ? (
           <ThreadView partner={activePartner} />
         ) : (
-          <div className="flex flex-col items-center justify-center w-full h-full text-center p-8">
-            <div className="w-24 h-24 border-2 border-black dark:border-white rounded-full flex items-center justify-center mb-4">
-              <Edit className="w-12 h-12" />
-            </div>
-            <h2 className="text-2xl font-semibold mb-2">Your Messages</h2>
-            <p className="text-gray-500 mb-6">Send private photos and messages to a friend or group.</p>
-            <button className="bg-[#0095F6] hover:bg-[#1877F2] text-white font-semibold py-2 px-4 rounded-lg">
-              Send Message
-            </button>
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <EmptyState
+              icon={Edit}
+              title="Your Messages"
+              description="Send private photos and messages to a friend or group."
+              actionLabel="Send Message"
+              onAction={() => {}}
+            />
           </div>
         )}
       </div>

@@ -431,3 +431,10 @@ If `req.file` is still undefined after the code fixes, verify every one of these
   - Left/right tap zones for manual navigation.
   - Pausing the timer on touch/hold.
 - **Reels Page & Player**: Implemented `app/(main)/reels/page.tsx` with CSS vertical scroll snapping (`snap-y snap-mandatory`). Built `ReelPlayer.tsx` containing an `IntersectionObserver` to trigger autoplay only when the video snaps into view, mimicking Instagram's native feel. Included interactive sidebar overlays (Like, Comment, Share) mapped to mock data counts.
+
+### Phase 8: Notifications UI & Global Polish
+- **Notifications Panel**: Built `NotificationPanel.tsx`, a Framer Motion-animated slide-over component. Utilizes a mock data service (`features/notification/service.ts`) to fetch notifications grouped by "New" and "Earlier". Includes unread status indicators and dynamic time formatting.
+- **Global Error Boundary**: Implemented Next.js global `error.tsx` to gracefully catch and display application crashes without unmounting the navigation shell.
+- **Empty States**: Created a reusable `EmptyState.tsx` component. Systematically applied it to the Main Feed, Profile Grid, Profile Saved Tab, and Messages Conversation list, eliminating stark blank screens.
+- **Micro-interactions**: Enhanced UI feedback with Framer Motion, adding responsive scaling (`whileTap`) to Follow buttons and standardizing UI enter/exit transitions.
+- **Service TODOs**: Placed explicit `// TODO: Replace with real backend endpoint` comments across all mock-data dependent services (Notifications, Stories, Reels, Search) to act as a clear checklist for future backend integration.

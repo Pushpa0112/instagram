@@ -6,6 +6,7 @@ import { Home, Search, Compass, MessageCircle, Heart, PlusSquare, Menu, LogOut, 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUIStore } from "@/store/useUIStore";
 import { useLogout } from "@/features/auth/hooks";
+import { useNotifications } from "@/features/notification/hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navItems = [
@@ -21,8 +22,11 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
-  const toggleCreatePost = useUIStore((state) => state.toggleCreatePost);
+  const { toggleCreatePost, toggleNotification } = useUIStore();
   const { mutate: logout } = useLogout();
+  const { data: notifications } = useNotifications();
+  
+  const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
 
   return (
     <div className="flex flex-col h-full w-full bg-white dark:bg-black border-r border-gray-300 dark:border-zinc-800 p-4 pt-8 transition-all">
@@ -46,6 +50,26 @@ export default function Sidebar() {
                 className="flex w-full items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group"
               >
                 <Icon className="w-6 h-6 transition-transform group-hover:scale-105 stroke-2" />
+                <span className="hidden lg:block text-base">{item.name}</span>
+              </button>
+            );
+          }
+
+          if (item.name === "Notifications") {
+            return (
+              <button
+                key={item.name}
+                onClick={toggleNotification}
+                className="flex w-full items-center gap-4 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors group relative"
+              >
+                <div className="relative">
+                  <Icon className="w-6 h-6 transition-transform group-hover:scale-105 stroke-2" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </div>
                 <span className="hidden lg:block text-base">{item.name}</span>
               </button>
             );

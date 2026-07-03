@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useFollowUser } from "./hooks";
+import { motion } from "framer-motion";
 
 interface FollowButtonProps {
   userId: string;
@@ -17,24 +18,25 @@ export default function FollowButton({ userId, isFollowing }: FollowButtonProps)
 
   if (isFollowing) {
     return (
-      <Button 
-        variant="secondary" 
-        className="font-semibold h-8"
+      <motion.button 
+        whileTap={{ scale: 0.95 }}
         onClick={handleFollowToggle}
         disabled={isPending}
+        className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 px-4 py-2"
       >
         {isPending ? "Updating..." : "Unfollow"}
-      </Button>
+      </motion.button>
     );
   }
 
   return (
-    <Button 
-      className="bg-[#0095F6] hover:bg-[#1877F2] text-white font-semibold h-8"
+    <motion.button 
+      whileTap={{ scale: 0.95 }}
       onClick={handleFollowToggle}
       disabled={isPending}
+      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[#0095F6] hover:bg-[#1877F2] text-white font-semibold h-8 px-4 py-2"
     >
       {isPending ? "Updating..." : "Follow"}
-    </Button>
+    </motion.button>
   );
 }

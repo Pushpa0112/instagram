@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useMyPosts } from "./hooks";
 import { useDeletePost } from "../post/hooks";
-import { Heart, MessageCircle, MoreHorizontal, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, MoreHorizontal, Trash2, Camera } from "lucide-react";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -24,6 +24,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Post } from "@/types/api";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 export default function MyPostsGrid() {
   const { data: posts, isLoading } = useMyPosts();
@@ -43,13 +44,11 @@ export default function MyPostsGrid() {
 
   if (!posts || posts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-        <div className="w-16 h-16 border-2 border-current rounded-full flex items-center justify-center mb-4">
-          <Trash2 className="w-8 h-8 opacity-0" /> {/* Spacer */}
-        </div>
-        <h2 className="text-2xl font-bold text-black dark:text-white mb-2">No Posts Yet</h2>
-        <p>When you share photos, they will appear on your profile.</p>
-      </div>
+      <EmptyState
+        icon={Camera}
+        title="No Posts Yet"
+        description="When you share photos, they will appear on your profile."
+      />
     );
   }
 

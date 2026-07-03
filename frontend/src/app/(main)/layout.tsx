@@ -1,5 +1,6 @@
 import Sidebar from "@/components/shared/Sidebar";
 import CreatePostModal from "@/features/post/CreatePostModal";
+import NotificationPanel from "@/features/notification/NotificationPanel";
 
 export default function MainLayout({
   children,
@@ -19,6 +20,7 @@ export default function MainLayout({
       <main className="flex-1 w-full sm:ml-20 lg:ml-64">
         {children}
       </main>
+      <NotificationPanel />
       <CreatePostModal />
     </div>
   );

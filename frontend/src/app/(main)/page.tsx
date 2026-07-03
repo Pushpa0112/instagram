@@ -5,6 +5,8 @@ import { usePostsFeed } from "@/features/feed/hooks";
 import { PostCard } from "@/features/post/PostCard";
 import { PostCardSkeleton } from "@/features/post/PostCardSkeleton";
 import { StoriesBar } from "@/features/story/StoriesBar";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { Camera } from "lucide-react";
 
 export default function MainPage() {
   const { data, isLoading, isError, hasNextPage, fetchNextPage, isFetchingNextPage } = usePostsFeed();
@@ -40,9 +42,12 @@ export default function MainPage() {
               </button>
             )}
             {(!data?.pages[0]?.posts || data.pages[0].posts.length === 0) && (
-              <div className="text-center py-20 text-gray-500">
-                <p className="text-lg font-semibold text-black dark:text-white mb-2">Welcome to Instagram!</p>
-                <p>When you follow people, you'll see the photos and videos they post here.</p>
+              <div className="py-20">
+                <EmptyState
+                  icon={Camera}
+                  title="Welcome to Instagram!"
+                  description="When you follow people, you'll see the photos and videos they post here."
+                />
               </div>
             )}
           </div>
