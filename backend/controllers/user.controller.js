@@ -92,7 +92,12 @@ export const login = async (req, res) => {
             following: user.following,
             posts: populatedPosts
         }
-        return res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
+        return res.cookie('token', token, { 
+            httpOnly: true, 
+            sameSite: 'none', 
+            secure: true, 
+            maxAge: 1 * 24 * 60 * 60 * 1000 
+        }).json({
             message: `Welcome back ${user.username}`,
             success: true,
             user
@@ -100,17 +105,24 @@ export const login = async (req, res) => {
 
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Internal server error", success: false });
     }
 };
 
 export const logout = async (_, res) => {
     try {
-        return res.cookie("token", "", { maxAge: 0 }).json({
+        return res.cookie("token", "", { 
+            maxAge: 0,
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true
+        }).json({
             message: 'Logged out successfully.',
             success: true
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Internal server error", success: false });
     }
 };
 
@@ -124,6 +136,7 @@ export const getProfile = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Internal server error", success: false });
     }
 };
 export const editProfile = async (req, res) => {
@@ -159,6 +172,7 @@ export const editProfile = async (req, res) => {
 
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Internal server error", success: false });
     }
 };
 
@@ -176,6 +190,7 @@ export const getSuggestedUsers = async (req, res) => {
         })
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ message: "Internal server error", success: false });
     }
 };
 export const followOrUnfollow = async (req, res) => {

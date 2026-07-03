@@ -215,7 +215,7 @@ All backend routes are prefixed with `/api/v1`.
 1. **Registration**: User posts credentials to `/api/v1/user/register`. Passwords are encrypted using `bcrypt.hash(password, 10)` before insertion.
 2. **Session Creation**: User logs in via `/api/v1/user/login`. Upon validation:
    - A JWT is generated containing `{ userId: user._id }` signed by `SECRET_KEY` (expires in 1 day).
-   - The token is attached to the response as an HTTP-only, `sameSite: 'strict'` cookie named `token`.
+   - The token is attached to the response as an HTTP-only, `sameSite: 'none'` and `secure: true` cookie named `token`.
 3. **Verification**: Private routes are protected by the `isAuthenticated` middleware.
    - It reads `req.cookies.token` via `cookie-parser`.
    - Verifies the signature with `jwt.verify`.
@@ -290,6 +290,10 @@ Variables parsed in the backend from `backend/.env`:
 - `API_SECRET`: Cloudinary API credential.
 - `CLOUD_NAME`: Cloudinary API credential (Fixed typo: previously `CLOUDE_NAME`).
 - `URL`: Authorized CORS origin (defaults to `http://localhost:3000`).
+
+Variables parsed in the frontend from `frontend/.env.local`:
+- `NEXT_PUBLIC_API_URL`: The URL of the backend API (e.g. `https://instagram-backend-e96c.onrender.com/api/v1`).
+- `NEXT_PUBLIC_SOCKET_URL`: The URL of the backend Socket.io server (e.g. `https://instagram-backend-e96c.onrender.com`).
 
 ---
 
